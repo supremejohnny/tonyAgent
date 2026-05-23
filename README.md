@@ -25,3 +25,10 @@ user_prompt -> analyze -> getting related contexts -> draft a code -> eval code 
 }
 ```
 至此，第一步state设定完成。
+
+#### 2026年5月23日-codex进展  
+添加了`test_run.py`，这是一个用`if/elif`构造的 mock LLM 测试脚本。  
+它的作用不是生成真实代码，而是把`intent -> context -> draft_code -> evaluation -> retry -> final_output`这一条状态流转完整跑通，方便观察每个 state 字段在不同阶段如何变化。  
+在这个示例里，第一次草稿代码会故意缺少`divide`方法，因此`evaluation["valid"]`会先返回`False`，并把失败原因写入`evaluation["reason"]`。  
+随后`retry()`会读取这个 reason，把它放回 context 继续下一轮生成；第二轮补齐`divide`和除零保护后，流程会收敛到 success。  
+这样后续你在做真正的 LLM 接入前，就已经有一个可运行、可解释、可验证的最小闭环样例。  
